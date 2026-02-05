@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Scrum Squad Feed</title>
+	<link rel="stylesheet" href="styles.css" />
+</head>
+<script>
+	function openModal() {
+		document.getElementById("modalOverlay").style.display = "flex";
+	}
+
+	function closeModal() {
+		document.getElementById("modalOverlay").style.display = "none";
+	}
+
+	function submitFeedback() {
+		const subject = document.getElementById("subject").value.trim();
+		const message = document.getElementById("message").value.trim();
+
+		if (!subject || !message) return;
+
+		// Placeholder object (matches DB rows later)
+		const post = {
+			subject: subject,
+			message: message,
+			author: "Anonymous",
+			time: "Just now"
+		};
+
+		addPostToFeed(post);
+
+		// Reset form
+		document.getElementById("subject").value = "";
+		document.getElementById("message").value = "";
+		closeModal();
+
+		/*
+			LATER (MySQL integration):
+			POST /api/feedback
+			body: { subject, message }
+			then refresh feed from DB
+		*/
+	}
+
+	function addPostToFeed(post) {
+		const feed = document.getElementById("feedList");
+		const emptyState = document.getElementById("emptyState");
+
+		if (emptyState) emptyState.remove();
+
+		const item = document.createElement("div");
+		item.className = "feed-item";
+
+		item.innerHTML = `
+			<div class="feed-subject">${post.subject}</div>
+			<div class="feed-text">${post.message}</div>
+			<span class="post-meta">${post.author} • ${post.time}</span>
+		`;
+
+		feed.prepend(item);
+	}
+</script>
+
+<body>
+
+	<!-- NAVBAR -->
+	<div class="navbar">
+		<div class="navbar-title">Scrum Squad</div>
+		<div class="navbar-links">
+			<a href="index.html">Home</a>
+			<a href="about.html">About</a>
+			<a href="login.html">Login</a>
+            <a href="feed.html">Feed</a>
+		</div>
+	</div>
+
+	<!-- MAIN CONTENT -->
+<main class="main-content">
+
+	<div class="feed-wrapper">
+
+		<div class="feed-scroll" id="feedList">
+
+			<!-- EMPTY STATE -->
+			<div class="feed-empty" id="emptyState">
+				<h2>No feedback yet</h2>
+				<p>Be the first to share feedback with your Scrum Squad.</p>
+			</div>
+
+		</div>
+
+	</div>
+
+</main>
+
+<!-- FLOATING BUTTON -->
+<button class="post-button primary-btn" onclick="openModal()">
+	Give Feedback
+</button>
+
+<!-- FEEDBACK MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+	<div class="modal">
+
+		<h2>Give us some feedback</h2>
+
+		<div class="form-group">
+			<label for="subject">Subject</label>
+			<input type="text" id="subject" placeholder="Brief summary" />
+		</div>
+
+		<div class="form-group">
+			<label for="message">Feedback</label>
+			<textarea id="message" placeholder="Describe your issue or feedback..."></textarea>
+		</div>
+
+		<div class="modal-actions">
+			<button class="secondary-btn" onclick="closeModal()">Cancel</button>
+			<button class="primary-btn" onclick="submitFeedback()">Post</button>
+		</div>
+
+	</div>
+</div>
+
+	<!-- FOOTER -->
+	<div class="footer">
+		© 2026 Scrum Squad Project Team. All rights reserved.
+	</div>
+
+</body>
+</html>
