@@ -1,0 +1,198 @@
+/* ==============================
+   DESIGN VARIABLES
+   ============================== */
+
+   /* Placeholder color scheme */
+:root {
+	--primary-color: #2563eb;
+	--primary-hover: #1e40af;
+	--secondary-color: #6b7280;
+	--background-color: #f8fafc;
+	--card-bg: #ffffff;
+	--text-color: #1f2937;
+	--muted-text: #6b7280;
+	--border-radius: 10px;
+	--transition-speed: 0.2s;
+}
+
+/* ==============================
+   GLOBAL RESET
+   ============================== */
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+
+/* ==============================
+   NAVBAR
+   ============================== */
+
+.navbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 2rem;
+	background-color: white;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-title {
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.navbar-links a {
+	margin-left: 1.5rem;
+	text-decoration: none;
+	color: var(--muted-text);
+	font-size: 0.95rem;
+	transition: color var(--transition-speed);
+}
+
+.navbar-links a:hover {
+	color: var(--primary-color);
+}
+
+/* ==============================
+   MAIN CONTENT
+   ============================== */
+
+.main-content {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 3rem 1rem;
+}
+
+/* ==============================
+   CARDS / CONTAINERS
+   ============================== */
+
+.card {
+	background-color: var(--card-bg);
+	border-radius: var(--border-radius);
+	padding: 3rem;
+	width: 100%;
+	max-width: 520px;
+	text-align: center;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ==============================
+   TYPOGRAPHY
+   ============================== */
+
+h1 {
+	font-size: clamp(26px, 4vw, 36px);
+	margin-bottom: 1rem;
+}
+
+p {
+	font-size: clamp(15px, 2.4vw, 18px);
+	color: var(--muted-text);
+	margin-bottom: 2rem;
+	line-height: 1.5;
+}
+
+/* ==============================
+   BUTTONS
+   ============================== */
+
+button {
+	padding: 0.75em 2em;
+	font-size: 1rem;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	margin: 0.5rem;
+	transition:
+		background-color var(--transition-speed),
+		transform var(--transition-speed),
+		box-shadow var(--transition-speed);
+}
+
+.primary-btn {
+	background-color: var(--primary-color);
+	color: white;
+	box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.secondary-btn {
+	background-color: #e5e7eb;
+	color: var(--text-color);
+}
+
+button:hover {
+	transform: translateY(-2px);
+}
+
+.primary-btn:hover {
+	background-color: var(--primary-hover);
+}
+
+.secondary-btn:hover {
+	background-color: #d1d5db;
+}
+
+button:active {
+	transform: translateY(1px) scale(0.98);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ==============================
+   FORM STYLES (LOGIN READY)
+   ============================== */
+
+.form-group {
+	margin-bottom: 1.5rem;
+	text-align: left;
+}
+
+label {
+	display: block;
+	margin-bottom: 0.4rem;
+	font-size: 0.9rem;
+	color: var(--muted-text);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+	width: 100%;
+	padding: 0.7rem 0.8rem;
+	font-size: 1rem;
+	border-radius: 6px;
+	border: 1px solid #d1d5db;
+	transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+input:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* ==============================
+   FOOTER
+   ============================== */
+
+.footer {
+	padding: 1rem;
+	text-align: center;
+	font-size: 0.85rem;
+	color: var(--muted-text);
+	border-top: 1px solid #e5e7eb;
+	background-color: white;
+}
