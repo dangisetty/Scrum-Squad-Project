@@ -1,7 +1,4 @@
-/* ==============================
-   DESIGN VARIABLES
-   ============================== */
-
+/* DESIGN VARIABLES */
 :root {
   --primary-color: #034078;
   --primary-hover: #1e40af;
@@ -13,10 +10,7 @@
   --transition-speed: 0.2s;
 }
 
-/* ==============================
-   GLOBAL RESET & LAYOUT
-   ============================== */
-
+/* GLOBAL RESET & LAYOUT */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -32,10 +26,7 @@ body {
   color: var(--text-color);
 }
 
-/* ==============================
-   NAVBAR
-   ============================== */
-
+/* NAVBAR */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -62,10 +53,7 @@ body {
   color: var(--primary-color);
 }
 
-/* ==============================
-   MAIN CONTENT
-   ============================== */
-
+/* MAIN CONTENT */
 .main-content {
   flex: 1;
   display: flex;
@@ -74,9 +62,7 @@ body {
   padding: 3rem 1rem;
 }
 
-/* ==============================
-   GENERIC CARD 
-   ============================== */
+/* GENERIC CARD */
 
 .card {
   background-color: var(--card-bg);
@@ -88,9 +74,7 @@ body {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
-/* ==============================
-   TYPOGRAPHY
-   ============================== */
+/* TYPOGRAPHY */
 
 h1 {
   font-size: clamp(26px, 4vw, 36px);
@@ -103,9 +87,7 @@ p {
   color: var(--muted-text);
 }
 
-/* ==============================
-   BUTTONS
-   ============================== */
+/* BUTTONS */
 
 button {
   padding: 0.75em 2em;
@@ -148,9 +130,7 @@ button:active {
   background-color: #d1d5db;
 }
 
-/* ==============================
-   FORMS
-   ============================== */
+/* FORMS */
 
 .form-group {
   margin-bottom: 1.5rem;
@@ -190,9 +170,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-/* ==============================
-   FEED CONTAINER
-   ============================== */
+/* FEED CONTAINER */
 
 .feed-wrapper {
   width: 100%;
@@ -216,9 +194,7 @@ textarea:focus {
   gap: 2rem;
 }
 
-/* ==============================
-   FEED ITEMS (SOCIAL STYLE)
-   ============================== */
+/* FEED ITEMS */
 
 .feed-item {
   max-width: 100%;
@@ -244,9 +220,7 @@ textarea:focus {
   white-space: normal;
 }
 
-/* ==============================
-   EMPTY STATE
-   ============================== */
+/* EMPTY FEED */
 
 .feed-empty {
   flex: 1;
@@ -268,9 +242,7 @@ textarea:focus {
   max-width: 420px;
 }
 
-/* ==============================
-   MODAL
-   ============================== */
+/* MODAL */
 
 .modal-overlay {
   position: fixed;
@@ -302,9 +274,7 @@ textarea:focus {
   margin-top: 1.5rem;
 }
 
-/* ==============================
-   FLOATING ACTION BUTTON
-   ============================== */
+/* ACTION BUTTON */
 
 .post-button {
   position: fixed;
@@ -316,9 +286,7 @@ textarea:focus {
   z-index: 100;
 }
 
-/* ==============================
-   FOOTER
-   ============================== */
+/* FOOTER */
 
 .footer {
   padding: 1rem;
@@ -327,4 +295,26 @@ textarea:focus {
   color: var(--muted-text);
   border-top: 1px solid #e5e7eb;
   background-color: #fff;
+}
+
+/* UPVOTES */
+
+.post-meta {
+  font-size: 0.85rem;
+  color: var(--muted-text);
+  margin-top: 0.5rem;
+}
+
+.upvote-btn {
+  margin-top: 0.75rem;
+  background-color: #f1f5f9;
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.upvote-btn.active {
+  background-color: var(--primary-color);
+  color: #fff;
 }
