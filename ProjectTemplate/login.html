@@ -20,19 +20,101 @@
 	</div>
 
 	<!-- MAIN CONTENT -->
+		</div>
+	</div>
 	<div class="main-content">
-		<div class="card">
+		<div class="card" id="loginCard">
 			<h1>Welcome Back</h1>
-			<p>Please log in to continue to your dashboard.</p>
+			<p id="loginMsg">Please log in or create an account.</p>
 
-			<button type="submit" class="primary-btn" style="width: 100%; margin-top: 1rem;">
-				Login
-			</button>
+			<form id="loginForm">
+				<div class="form-group">
+					<label for="login-username">Username</label>
+					<input type="text" id="login-username" required autocomplete="username">
+				</div>
+				<div class="form-group">
+					<label for="login-password">Password</label>
+					<input type="password" id="login-password" required autocomplete="current-password">
+				</div>
+				<button type="submit" class="primary-btn" style="width: 100%; margin-top: 1rem;">Login</button>
+			</form>
+
+			<hr style="margin: 2rem 0;">
+
+			<h2 style="margin-bottom: 0.5rem;">Create Account</h2>
+			<form id="signupForm">
+				<div class="form-group">
+					<label for="signup-username">Username</label>
+					<input type="text" id="signup-username" required autocomplete="username">
+				</div>
+				<div class="form-group">
+					<label for="signup-password">Password</label>
+					<input type="password" id="signup-password" required autocomplete="new-password">
+				</div>
+				<div class="form-group">
+					<label for="signup-displayName">Display Name (optional)</label>
+					<input type="text" id="signup-displayName" autocomplete="nickname">
+				</div>
+				<button type="submit" class="secondary-btn" style="width: 100%; margin-top: 1rem;">Sign Up</button>
+			</form>
+			<div id="authStatus" style="margin-top:1rem;color:#b91c1c;"></div>
+		</div>
+
+	
+
+	<script src="JavaScript/authService.js"></script>
+	<script>
+	async function checkSession() {
+		const res = await AuthService.whoami();
+		if (res.ok && res.user) {
+			document.getElementById('loginMsg').textContent = `Logged in as ${res.user.displayName || 'User'}`;
+			document.getElementById('loginForm').style.display = 'none';
+			document.getElementById('signupForm').style.display = 'none';
+			document.getElementById('authStatus').innerHTML = `<button onclick="logout()" class='secondary-btn'>Logout</button>`;
+		}
+	}
+	checkSession();
+
+	document.getElementById('loginForm').onsubmit = async function(e) {
+		e.preventDefault();
+		const username = document.getElementById('login-username').value.trim();
+		const password = document.getElementById('login-password').value;
+		const res = await AuthService.login(username, password);
+		if (res.ok) {
+			document.getElementById('authStatus').style.color = '#15803d';
+			document.getElementById('authStatus').textContent = 'Login successful!';
+			setTimeout(() => window.location.href = 'feed.html', 800);
+		} else {
+			document.getElementById('authStatus').style.color = '#b91c1c';
+			document.getElementById('authStatus').textContent = res.message || 'Login failed.';
+		}
+	};
+
+	document.getElementById('signupForm').onsubmit = async function(e) {
+		e.preventDefault();
+		const username = document.getElementById('signup-username').value.trim();
+		const password = document.getElementById('signup-password').value;
+		const displayName = document.getElementById('signup-displayName').value.trim();
+		const res = await AuthService.signup(username, password, displayName);
+		if (res.ok) {
+			document.getElementById('authStatus').style.color = '#15803d';
+			document.getElementById('authStatus').textContent = 'Account created! Logging in...';
+			setTimeout(() => window.location.href = 'feed.html', 800);
+		} else {
+			document.getElementById('authStatus').style.color = '#b91c1c';
+			document.getElementById('authStatus').textContent = res.message || 'Signup failed.';
+		}
+	};
+
+	async function logout() {
+		await AuthService.logout();
+		window.location.reload();
+	}
+	</script>
 
 	<!-- FOOTER -->
 	<div class="footer">
 		© 2026 Scrum Squad Project Team. All rights reserved.
 	</div>
-
 </body>
 </html>

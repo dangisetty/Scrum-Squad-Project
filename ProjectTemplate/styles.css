@@ -289,6 +289,10 @@ textarea:focus {
 /* FOOTER */
 
 .footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   padding: 1rem;
   text-align: center;
   font-size: 0.85rem;

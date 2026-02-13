@@ -28,6 +28,73 @@ namespace ProjectTemplate
 		}
 	}
 
+	public class Feedback
+	{
+		// ===================== UPDATES SYSTEM =====================
+
+		[WebMethod(EnableSession = true)]
+		[System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+		public string AddUpdate(string postId, string content)
+		{
+			// Only admins/employers can add updates
+			var roleObj = Session["role"];
+			var normalizedRole = NormalizeRole(roleObj?.ToString() ?? "");
+			if (normalizedRole != "admin" && normalizedRole != "employer")
+			{
+				Context.Response.StatusCode = 403;
+				return "error: unauthorized";
+			}
+			if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(content))
+				return "error: missing postId or content";
+
+			var update = new Update
+			{
+				PostId = postId,
+				Content = content,
+				AuthorRole = normalizedRole,
+				Timestamp = DateTime.UtcNow
+			};
+			try
+			{
+				UpdateStorage.Save(update);
+				return "ok";
+			}
+			catch (Exception ex)
+			{
+				return "error: " + ex.Message;
+			}
+		}
+
+		[WebMethod(EnableSession = true)]
+		[System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+		public List<Update> GetUpdatesForPost(string postId)
+		{
+			if (string.IsNullOrWhiteSpace(postId))
+				return new List<Update>();
+			try
+			{
+				return UpdateStorage.GetByPostId(postId);
+			}
+			catch
+			{
+				return new List<Update>();
+			}
+		}
+
+		[WebMethod(EnableSession = true)]
+		[System.Web.Script.Services.ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+		public List<Update> GetAllUpdates()
+		{
+			try
+			{
+				return UpdateStorage.GetAll();
+			}
+			catch
+			{
+				return new List<Update>();
+			}
+		}
+		}
 	public class AggregatedReportDto
 	{
 		public int TotalCount { get; set; }

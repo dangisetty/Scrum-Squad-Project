@@ -30,11 +30,22 @@ try {
 } catch (e) {
   // If file missing or invalid, seed defaults and write file
   demoUsers = [
-    { username: 'employee1', password: 'password123', displayName: 'Employee One' },
-    { username: 'alice', password: 'alicepass', displayName: 'Alice Example' }
+    { username: 'employee1', password: 'password123', displayName: 'Employee One', isAdmin: true },
+    { username: 'alice', password: 'alicepass', displayName: 'Alice Example', isAdmin: false }
   ];
   try { fs.writeFileSync(usersFile, JSON.stringify(demoUsers, null, 2)); } catch (e) { /* ignore */ }
 }
+
+// Ensure each user has a publicId (non-identifying handle) so UI doesn't expose usernames
+function generatePublicId() {
+  return 'user-' + Math.random().toString(36).slice(2, 8);
+}
+
+let usersChanged = false;
+demoUsers.forEach(u => {
+  if (!u.publicId) { u.publicId = generatePublicId(); usersChanged = true; }
+});
+if (usersChanged) saveUsers();
 
 function saveUsers() {
   try {
@@ -63,6 +74,25 @@ function saveFeedback() {
   }
 }
 
+// Updates storage (persist to disk for demo)
+const updatesFile = path.join(__dirname, 'updates.json');
+let updatesList = [];
+try {
+  const raw = fs.readFileSync(updatesFile, 'utf8');
+  updatesList = JSON.parse(raw);
+} catch (e) {
+  updatesList = [];
+  try { fs.writeFileSync(updatesFile, JSON.stringify(updatesList, null, 2)); } catch (e) { /* ignore */ }
+}
+
+function saveUpdates() {
+  try {
+    fs.writeFileSync(updatesFile, JSON.stringify(updatesList, null, 2));
+  } catch (e) {
+    console.error('Failed to save updates.json', e);
+  }
+}
+
 app.post('/api/employeeLogin', (req, res) => {
   const { username, password } = req.body || {};
   if (!username || !password) {
@@ -75,7 +105,8 @@ app.post('/api/employeeLogin', (req, res) => {
   }
 
   // store minimal user in session
-  req.session.user = { username: user.username, displayName: user.displayName };
+  // do NOT expose internal username to the frontend; use a publicId and a display name
+  req.session.user = { publicId: user.publicId, displayName: user.displayName, username: user.username, isAdmin: !!(user.isAdmin || user.role === 'admin') };
   res.json({ ok: true, user: req.session.user });
 });
 
@@ -90,11 +121,12 @@ app.post('/api/signup', (req, res) => {
   const exists = demoUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
   if (exists) return res.status(409).json({ ok: false, message: 'Username already taken' });
 
-  const user = { username: username, password: password, displayName: displayName || username };
+  const user = { username: username, password: password, displayName: displayName || username, publicId: generatePublicId(), isAdmin: false };
   demoUsers.push(user);
   saveUsers();
 
-  req.session.user = { username: user.username, displayName: user.displayName };
+  // set session to a non-identifying profile
+  req.session.user = { publicId: user.publicId, displayName: user.displayName, username: user.username, isAdmin: false };
   res.json({ ok: true, user: req.session.user });
 });
 
@@ -113,7 +145,8 @@ app.post('/api/feedback', (req, res) => {
 
   const id = Date.now();
   const createdAt = new Date().toISOString();
-  const author = (req.session && req.session.user && req.session.user.username) || 'anonymous';
+  // Use the publicId stored in session (non-identifying) as the author
+  const author = (req.session && req.session.user && req.session.user.publicId) || 'anonymous';
 
   const item = {
     id,
@@ -143,10 +176,43 @@ app.post('/api/feedback/:id/upvote', (req, res) => {
 
 app.get('/api/whoami', (req, res) => {
   if (req.session && req.session.user) {
-    return res.json({ ok: true, user: req.session.user });
+    // find stored user to expose admin flag
+    const stored = demoUsers.find(u => u.username === req.session.user.username);
+    const isAdmin = !!(stored && stored.isAdmin);
+    return res.json({ ok: true, user: { ...req.session.user, isAdmin } });
   }
   res.json({ ok: false });
 });
+  // Get updates for a specific feedback post
+  app.get('/api/feedback/:id/updates', (req, res) => {
+    const id = Number(req.params.id);
+    const results = updatesList.filter(u => Number(u.postId) === id).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    res.json(results);
+  });
+
+  // Post an update to a feedback item (admin-only)
+  app.post('/api/feedback/:id/update', (req, res) => {
+    const id = Number(req.params.id);
+    const { text, content } = req.body || {};
+    const bodyContent = text || content;
+    if (!bodyContent) return res.status(400).json({ ok: false, message: 'Missing content' });
+
+    // check admin
+    if (!req.session || !req.session.user || !req.session.user.isAdmin) {
+      return res.status(403).json({ ok: false, message: 'Forbidden' });
+    }
+
+    const update = {
+      id: Date.now(),
+      postId: id,
+      content: bodyContent,
+      authorRole: 'admin',
+      timestamp: new Date().toISOString()
+    };
+    updatesList.unshift(update);
+    saveUpdates();
+    res.json({ ok: true, update });
+  });
 
 app.post('/api/logout', (req, res) => {
   req.session.destroy(err => {

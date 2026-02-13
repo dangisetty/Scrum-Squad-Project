@@ -1,4 +1,21 @@
 [
-  { "username": "employee1", "password": "password123", "displayName": "Employee One" },
-  { "username": "alice", "password": "alicepass", "displayName": "Alice Example" }
+  {
+    "username": "employee1",
+    "password": "password123",
+    "displayName": "Employee One",
+    "publicId": "user-kfiagi"
+  },
+  {
+    "username": "alice",
+    "password": "alicepass",
+    "displayName": "Alice Example",
+    "publicId": "user-d9nmq4"
+  },
+  {
+    "username": "admin",
+    "password": "adminpass",
+    "displayName": "Admin User",
+    "publicId": "user-admin",
+    "role": "admin"
+  }
 ]
