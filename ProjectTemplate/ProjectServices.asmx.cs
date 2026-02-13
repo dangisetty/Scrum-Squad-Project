@@ -43,9 +43,13 @@ namespace ProjectTemplate
 	[System.Web.Script.Services.ScriptService]
 	public class ProjectServices : System.Web.Services.WebService
 	{
-		private string dbID = "cis440template";
-		private string dbPass = "!!Cis440";
-		private string dbName = "cis440template";
+		////////////////////////////////////////////////////////////////////////
+		///replace the values of these variables with your database credentials
+		////////////////////////////////////////////////////////////////////////
+		private string dbID = "cis440Spring2026team2";
+		private string dbPass = "cis440Spring2026team2";
+		private string dbName = "cis440Spring2026team2";
+		////////////////////////////////////////////////////////////////////////
 
 		private string getConString()
 		{
