@@ -1,13 +1,23 @@
 let feedbackList = [];
 let currentSort = "recent";
+let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", initFeed);
 
 async function initFeed() {
   const feed = document.getElementById("feedList");
 
+  // Get current user
+  try {
+    const res = await fetch('/api/whoami', { credentials: 'include' });
+    const data = await res.json();
+    currentUser = data.ok ? data.user : null;
+  } catch {
+    currentUser = null;
+  }
+
   // Show empty state immediately
-  renderFeed(feed, [], handleUpvote);
+  renderFeed(feed, [], handleUpvote, currentUser);
 
   feedbackList = await FeedbackService.getAll();
   render();
@@ -16,7 +26,7 @@ async function initFeed() {
 
 function render() {
   const feed = document.getElementById("feedList");
-  renderFeed(feed, getSortedFeedback(), handleUpvote);
+  renderFeed(feed, getSortedFeedback(), handleUpvote, currentUser);
 }
 
 function getSortedFeedback() {

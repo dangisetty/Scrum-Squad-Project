@@ -3,13 +3,15 @@
     "username": "employee1",
     "password": "password123",
     "displayName": "Employee One",
-    "publicId": "user-kfiagi"
+    "publicId": "user-kfiagi",
+    "role": "employee"
   },
   {
     "username": "alice",
     "password": "alicepass",
     "displayName": "Alice Example",
-    "publicId": "user-d9nmq4"
+    "publicId": "user-d9nmq4",
+    "role": "employee"
   },
   {
     "username": "admin",

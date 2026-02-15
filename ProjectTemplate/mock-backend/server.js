@@ -178,16 +178,55 @@ app.get('/api/whoami', (req, res) => {
   if (req.session && req.session.user) {
     // find stored user to expose admin flag
     const stored = demoUsers.find(u => u.username === req.session.user.username);
-    const isAdmin = !!(stored && stored.isAdmin);
+    const isAdmin = !!(stored && (stored.isAdmin || stored.role === 'admin'));
     return res.json({ ok: true, user: { ...req.session.user, isAdmin } });
   }
   res.json({ ok: false });
 });
+
+// Aggregated report endpoint (admin-only)
+app.get('/api/aggregated-report', (req, res) => {
+  if (!req.session || !req.session.user || !req.session.user.isAdmin) {
+    return res.status(403).json({ ok: false, message: 'Forbidden' });
+  }
+
+  const totalCount = feedbackList.length;
+
+  const countsPerTheme = {};
+  const countsPerDay = {};
+
+  feedbackList.forEach(fb => {
+    // Theme
+    const theme = fb.theme || 'Other';
+    countsPerTheme[theme] = (countsPerTheme[theme] || 0) + 1;
+
+    // Day
+    const day = new Date(fb.createdAt).toISOString().split('T')[0];
+    countsPerDay[day] = (countsPerDay[day] || 0) + 1;
+  });
+
+  const countsPerThemeArray = Object.keys(countsPerTheme).map(key => ({ Key: key, Count: countsPerTheme[key] }));
+  const countsPerDayArray = Object.keys(countsPerDay).map(key => ({ Key: key, Count: countsPerDay[key] }));
+
+  res.json({
+    TotalCount: totalCount,
+    CountsPerTheme: countsPerThemeArray,
+    CountsPerDay: countsPerDayArray
+  });
+});
+
   // Get updates for a specific feedback post
   app.get('/api/feedback/:id/updates', (req, res) => {
     const id = Number(req.params.id);
-    const results = updatesList.filter(u => Number(u.postId) === id).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-    res.json(results);
+    // Re-read from disk to ensure we have latest data
+    try {
+      const raw = fs.readFileSync(updatesFile, 'utf8');
+      const fresh = JSON.parse(raw);
+      const results = fresh.filter(u => Number(u.postId) === id).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      res.json(results);
+    } catch (e) {
+      res.json([]);
+    }
   });
 
   // Post an update to a feedback item (admin-only)

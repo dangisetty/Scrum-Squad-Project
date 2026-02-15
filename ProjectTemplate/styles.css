@@ -322,3 +322,50 @@ textarea:focus {
   background-color: var(--primary-color);
   color: #fff;
 }
+
+/* UPDATES */
+
+.feedback-update {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.update-meta {
+  font-size: 0.8rem;
+  color: var(--muted-text);
+  margin-bottom: 0.5rem;
+}
+
+.update-meta strong {
+  color: var(--primary-color);
+}
+
+.update-text {
+  line-height: 1.5;
+}
+
+.add-update-form {
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.update-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+.update-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
